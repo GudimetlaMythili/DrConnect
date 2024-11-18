@@ -94,16 +94,40 @@ public class DoctorsListApp {
         }
     }
 
-    private static void searchBySpecialization(Scanner scanner) {
-        System.out.print("Enter specialization to search: ");
-        String specialization = scanner.nextLine();
-        System.out.println("\nDoctors with specialization in " + specialization + ":");
-        for (Doctor doctor : doctorsList) {
-            if (doctor.getSpecialization().equalsIgnoreCase(specialization)) {
-                doctor.showDoctorInfo();
-            }
+private static void searchBySpecialization(Scanner scanner) {
+    // Step 1: List available specializations
+    Set<String> specializations = new HashSet<>();
+    for (Doctor doctor : doctorsList) {
+        specializations.add(doctor.getSpecialization());
+    }
+
+    System.out.println("\nAvailable Specializations:");
+    int i = 1;
+    List<String> specializationList = new ArrayList<>(specializations);
+    for (String specialization : specializationList) {
+        System.out.println(i + ". " + specialization);
+        i++;
+    }
+
+    // Step 2: Ask user to choose specialization
+    System.out.print("\nEnter the number of the specialization to search: ");
+    int choice = getIntInput(scanner);
+
+    if (choice < 1 || choice > specializations.size()) {
+        System.out.println("\nInvalid choice. Please try again.");
+        return;
+    }
+
+    String selectedSpecialization = specializationList.get(choice - 1);
+
+    // Step 3: Display doctors with the chosen specialization
+    System.out.println("\nDoctors with specialization in " + selectedSpecialization + ":");
+    for (Doctor doctor : doctorsList) {
+        if (doctor.getSpecialization().equalsIgnoreCase(selectedSpecialization)) {
+            doctor.showDoctorInfo();
         }
     }
+}
 
     private static void bookAppointment(Scanner scanner) {
         System.out.println("\nAvailable Doctors:");
