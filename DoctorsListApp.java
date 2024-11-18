@@ -97,75 +97,142 @@ public class DoctorsListApp {
         }
     }
 
-private static void searchBySpecialization(Scanner scanner) {
-    // Step 1: List available specializations
-    Set<String> specializations = new HashSet<>();
-    for (Doctor doctor : doctorsList) {
-        specializations.add(doctor.getSpecialization());
-    }
-
-    System.out.println("\nAvailable Specializations:");
-    int i = 1;
-    List<String> specializationList = new ArrayList<>(specializations);
-    for (String specialization : specializationList) {
-        System.out.println(i + ". " + specialization);
-        i++;
-    }
-
-    // Step 2: Ask user to choose specialization
-    System.out.print("\nEnter the number of the specialization to search: ");
-    int choice = getIntInput(scanner);
-
-    if (choice < 1 || choice > specializations.size()) {
-        System.out.println("\nInvalid choice. Please try again.");
-        return;
-    }
-
-    String selectedSpecialization = specializationList.get(choice - 1);
-
-    // Step 3: Display doctors with the chosen specialization
-    System.out.println("\nDoctors with specialization in " + selectedSpecialization + ":");
-    for (Doctor doctor : doctorsList) {
-        if (doctor.getSpecialization().equalsIgnoreCase(selectedSpecialization)) {
-            doctor.showDoctorInfo();
+    private static void searchBySpecialization(Scanner scanner) {
+        // List available specializations
+        Set<String> specializations = new HashSet<>();
+        for (Doctor doctor : doctorsList) {
+            specializations.add(doctor.getSpecialization());
+        }
+    
+        System.out.println("\nAvailable Specializations:");
+        int i = 1;
+        List<String> specializationList = new ArrayList<>(specializations);
+        for (String specialization : specializationList) {
+            System.out.println(i + ". " + specialization);
+            i++;
+        }
+    
+        System.out.print("\nEnter the number of the specialization to search: ");
+        int choice = getIntInput(scanner);
+    
+        if (choice < 1 || choice > specializations.size()) {
+            System.out.println("\nInvalid choice. Please try again.");
+            return;
+        }
+    
+        String selectedSpecialization = specializationList.get(choice - 1);
+    
+        // Display doctors with the chosen specialization
+        System.out.println("\nDoctors with specialization in " + selectedSpecialization + ":");
+        List<Doctor> availableDoctors = new ArrayList<>();
+        for (Doctor doctor : doctorsList) {
+            if (doctor.getSpecialization().equalsIgnoreCase(selectedSpecialization)) {
+                doctor.showDoctorInfo();
+                availableDoctors.add(doctor);
+            }
+        }
+    
+        // Ask if the user wants to book an appointment with one of the listed doctors
+        System.out.println("\nWould you like to book an appointment with any of these doctors? (yes/no)");
+        String bookAppointmentChoice = scanner.nextLine();
+    
+        if (bookAppointmentChoice.equalsIgnoreCase("yes")) {
+            System.out.print("Enter the number of the doctor to book an appointment with: ");
+            int doctorIndex = getIntInput(scanner) - 1;
+    
+            if (doctorIndex >= 0 && doctorIndex < availableDoctors.size()) {
+                bookAppointmentWithDoctor(scanner, availableDoctors.get(doctorIndex));
+            } else {
+                System.out.println("Invalid doctor selection. Returning to the main menu.");
+            }
         }
     }
-}
-private static void searchByLocation(Scanner scanner) {
-    // Step 1: List available locations
-    Set<String> locations = new HashSet<>();
-    for (Doctor doctor : doctorsList) {
-        locations.add(doctor.getHospital().getLocation());
-    }
-
-    System.out.println("\nAvailable Locations:");
-    int i = 1;
-    List<String> locationList = new ArrayList<>(locations);
-    for (String location : locationList) {
-        System.out.println(i + ". " + location);
-        i++;
-    }
-
-    // Step 2: Ask user to choose a location
-    System.out.print("\nEnter the number of the location to search: ");
-    int choice = getIntInput(scanner);
-
-    if (choice < 1 || choice > locationList.size()) {
-        System.out.println("\nInvalid choice. Please try again.");
-        return;
-    }
-
-    String selectedLocation = locationList.get(choice - 1);
-
-    // Step 3: Display doctors located in the selected location
-    System.out.println("\nDoctors located in " + selectedLocation + ":");
-    for (Doctor doctor : doctorsList) {
-        if (doctor.getHospital().getLocation().equalsIgnoreCase(selectedLocation)) {
-            doctor.showDoctorInfo();
+    
+    private static void searchByLocation(Scanner scanner) {
+        // List available locations
+        Set<String> locations = new HashSet<>();
+        for (Doctor doctor : doctorsList) {
+            locations.add(doctor.getHospital().getLocation());
+        }
+    
+        System.out.println("\nAvailable Locations:");
+        int i = 1;
+        List<String> locationList = new ArrayList<>(locations);
+        for (String location : locationList) {
+            System.out.println(i + ". " + location);
+            i++;
+        }
+    
+        System.out.print("\nEnter the number of the location to search: ");
+        int choice = getIntInput(scanner);
+    
+        if (choice < 1 || choice > locationList.size()) {
+            System.out.println("\nInvalid choice. Please try again.");
+            return;
+        }
+    
+        String selectedLocation = locationList.get(choice - 1);
+    
+        // Display doctors located in the selected location
+        System.out.println("\nDoctors located in " + selectedLocation + ":");
+        List<Doctor> availableDoctors = new ArrayList<>();
+        for (Doctor doctor : doctorsList) {
+            if (doctor.getHospital().getLocation().equalsIgnoreCase(selectedLocation)) {
+                doctor.showDoctorInfo();
+                availableDoctors.add(doctor);
+            }
+        }
+    
+        // Ask if the user wants to book an appointment with one of the listed doctors
+        System.out.println("\nWould you like to book an appointment with any of these doctors? (yes/no)");
+        String bookAppointmentChoice = scanner.nextLine();
+    
+        if (bookAppointmentChoice.equalsIgnoreCase("yes")) {
+            System.out.print("Enter the number of the doctor to book an appointment with: ");
+            int doctorIndex = getIntInput(scanner) - 1;
+    
+            if (doctorIndex >= 0 && doctorIndex < availableDoctors.size()) {
+                bookAppointmentWithDoctor(scanner, availableDoctors.get(doctorIndex));
+            } else {
+                System.out.println("Invalid doctor selection. Returning to the main menu.");
+            }
         }
     }
-}
-
+    
+    private static void bookAppointmentWithDoctor(Scanner scanner, Doctor selectedDoctor) {
+        // Ask for appointment type
+        System.out.print("\nEnter appointment type (e.g., Consultation, Follow-up): ");
+        String appointmentType = scanner.nextLine();
+    
+        // Ask for appointment date (not time)
+        System.out.print("Enter appointment date (YYYY-MM-DD): ");
+        String dateString = scanner.nextLine();
+    
+        LocalDate appointmentDate;
+        try {
+            appointmentDate = LocalDate.parse(dateString);  // Convert string to LocalDate
+        } catch (Exception e) {
+            System.out.println("Invalid date format. Please try again with the correct format (YYYY-MM-DD).");
+            return;
+        }
+    
+        // Check if the user already has an appointment with the selected doctor on the same date and appointment type
+        for (Appointment existingAppointment : appointments) {
+            if (existingAppointment.getUsername().equals(currentUser.getUsername()) && 
+                existingAppointment.getDoctor().equals(selectedDoctor) && 
+                existingAppointment.getAppointmentDate().equals(appointmentDate) && 
+                existingAppointment.getAppointmentType().equalsIgnoreCase(appointmentType)) {
+                System.out.println("\nYou already have a " + appointmentType + " appointment with Dr. " + selectedDoctor.getName() + " on " + appointmentDate + ".");
+                return;
+            }
+        }
+    
+        // If no conflict, proceed to book the appointment
+        appointments.add(new Appointment(currentUser.getUsername(), selectedDoctor, appointmentType, currentUser.getMobileNumber(), appointmentDate));
+        System.out.println("**********************************************************************************************************************************************************");
+        System.out.println("\nAppointment booked successfully with " + selectedDoctor.getName() + " on " + appointmentDate + " for " + appointmentType + ".");
+        System.out.println("\n**********************************************************************************************************************************************************");
+    }    
 
     private static void bookAppointment(Scanner scanner) {
         System.out.println("\nAvailable Doctors:");
