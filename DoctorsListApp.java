@@ -37,35 +37,38 @@ public class DoctorsListApp {
                         default -> System.out.println("\nInvalid choice. Please try again.");
                     }
                 }
-
+    
                 int choice;
                 do {
-                    System.out.println("\nWelcome, " + currentUser.getUsername() + "!");
+                    System.out.println("\nWelcome, " + currentUser.getUsername() + "!\n");
                     System.out.println("1. View All Doctors");
                     System.out.println("2. Search Doctor by Specialization");
-                    System.out.println("3. Book an Appointment");
-                    System.out.println("4. Book Full Health Checkup");
-                    System.out.println("5. View My Appointments");
-                    System.out.println("6. Logout");
+                    System.out.println("3. Search Doctor by Location");  // New option
+                    System.out.println("4. Book an Appointment");
+                    System.out.println("5. Book Full Health Checkup");
+                    System.out.println("6. View My Appointments");
+                    System.out.println("7. Logout");
                     System.out.print("Please enter your choice: ");
                     choice = getIntInput(scanner);
                     
                     switch (choice) {
                         case 1 -> displayDoctors();
                         case 2 -> searchBySpecialization(scanner);
-                        case 3 -> bookAppointment(scanner);
-                        case 4 -> bookFullHealthCheckup();
-                        case 5 -> viewAppointments();
-                        case 6 -> {
+                        case 3 -> searchByLocation(scanner);  // Call the new searchByLocation method
+                        case 4 -> bookAppointment(scanner);
+                        case 5 -> bookFullHealthCheckup();
+                        case 6 -> viewAppointments();
+                        case 7 -> {
                             System.out.println("\nLogging out...\n");
                             currentUser = null;  // Log out and return to login menu
                         }
                         default -> System.out.println("\nInvalid choice. Please try again.\n");
                     }
-                } while (choice != 6);  // Loop until the user logs out
+                } while (choice != 7);  // Loop until the user logs out
             }
         }
     }
+    
 
     private static void initializeDoctors() {
         doctorsList.add(new Doctor("Dr. B. Soma Raju", "Cardiologist", true, new Hospital("Apollo", "Jubilee Hills", "Film Nagar"), 15));
@@ -128,6 +131,41 @@ private static void searchBySpecialization(Scanner scanner) {
         }
     }
 }
+private static void searchByLocation(Scanner scanner) {
+    // Step 1: List available locations
+    Set<String> locations = new HashSet<>();
+    for (Doctor doctor : doctorsList) {
+        locations.add(doctor.getHospital().getLocation());
+    }
+
+    System.out.println("\nAvailable Locations:");
+    int i = 1;
+    List<String> locationList = new ArrayList<>(locations);
+    for (String location : locationList) {
+        System.out.println(i + ". " + location);
+        i++;
+    }
+
+    // Step 2: Ask user to choose a location
+    System.out.print("\nEnter the number of the location to search: ");
+    int choice = getIntInput(scanner);
+
+    if (choice < 1 || choice > locationList.size()) {
+        System.out.println("\nInvalid choice. Please try again.");
+        return;
+    }
+
+    String selectedLocation = locationList.get(choice - 1);
+
+    // Step 3: Display doctors located in the selected location
+    System.out.println("\nDoctors located in " + selectedLocation + ":");
+    for (Doctor doctor : doctorsList) {
+        if (doctor.getHospital().getLocation().equalsIgnoreCase(selectedLocation)) {
+            doctor.showDoctorInfo();
+        }
+    }
+}
+
 
     private static void bookAppointment(Scanner scanner) {
         System.out.println("\nAvailable Doctors:");
@@ -434,7 +472,7 @@ private static void searchBySpecialization(Scanner scanner) {
                     for (User user : users) {
                         if (user.getUsername().equals(username) && user.getPassword().equals(retryPassword)) {
                             currentUser = user;
-                            System.out.println("Login successful!");
+                            System.out.println("\nLogin successful!");
                             return;
                         }
                     }
